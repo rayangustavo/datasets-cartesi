@@ -12,7 +12,3 @@ Host Mode:
 Production Mode:
     docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up
     docker-compose -f ./docker-compose.yml -f ./docker-compose.override.yml down -v
-
-https://github.com/lynoferraz/echo-plus-cartesi-dapp
-tudo certo: {transactionHash: '0x4111e60b4a07e6a300147611a0c2cec61d4726e6b5cd09aed5b3836169632443', transactionIndex: 0, blockHash: '0xc14881e1f6a1b366b5c4b41b84330c88047ebb5c5dc5f2929e558d942613dd1f', blockNumber: 147, from: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', …}
-quando rejeita na metamask: {code: 4001, message: 'MetaMask Tx Signature: User denied transaction signature.', stack: '{\n  "code": 4001,\n  "message": "MetaMask Tx Signat…lbakoplchlghecdalmeeeajnimhm/common-3.js:10:14260'}
