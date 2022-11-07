@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cartesi DApp</title>
+    <script src="../static/node_modules/web3/dist/web3.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script> -->
+    <!-- <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script> -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Kanit' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/base.css">
+</head>
+<body>
+    <nav>
+      <ul style="display: flex;">
+        <li><img class="logo" src="static/logocartesi.png" class="fit-cover"></li>
+        <li><div class="title">SQLite DApp</div></li>
+        <li><a class="nava" href="/index"><span class="material-icons">home</span>Home</a></li>
+        <li><a class="nava" href="/insert"><span class="material-icons">create</span>Insert</a></li>
+        <li><a class="nava" href="/select"><span class="material-icons">search</span>Search</a></li>
+        <li><a class="nava" href="/update"><span class="material-icons">update</span>Update</a></li>
+        <li><a class="nava" href="/delete"><span class="material-icons">delete_outline</span>Delete</a></li>
+        <li style="margin-right:385px"><a class="nava" href="/train"><span class="material-icons">computer</span>Train</a></li>
+        <li><div class="metamask"><img src="../static/MetaMask_Icon.png" class=fit-cover/></div></li>
+        <li style="margin-left:-4px;"><div id="metamask"></div></li>
+      </ul>
+    </nav>
+  
+  <div style="height:30px;"></div>
+
+  {% block content %}
+  {% endblock content %}
+
+  <script type="text/javascript">
+      var provider = window.ethereum
+      const web3 = new Web3(provider);
+      const metamask = document.getElementById('metamask')
+
+      async function run(){
+        if (!provider){
+          let metamaskButton = document.createElement('BUTTON')
+          let metamaskText = document.createTextNode('Install Metamask')
+          metamaskButton.appendChild(metamaskText)
+          metamaskButton.classList.add('metamaskButton')
+          metamaskButton.onclick = install
+          metamask.appendChild(metamaskButton)
+        }
+        else{
+          let accounts = await provider.request({method: 'eth_accounts'})
+          if (accounts.length != 0){
+            let wallet_address = accounts[0]
+            let metamaskText = document.createElement('div')
+            metamaskText.textContent = wallet_address
+            metamaskText.classList.add('wallet-address')
+            metamask.appendChild(metamaskText)
+            
+          }
+          else{
+            let metamaskButton = document.createElement('BUTTON')
+            let metamaskText = document.createTextNode('Connect to Metamask')
+            metamaskButton.appendChild(metamaskText)
+            metamaskButton.classList.add('metamaskButton')
+            metamaskButton.onclick = connect
+            metamask.appendChild(metamaskButton)
+          }
+        }
+      }
+
+      function install(){
+        let metamask_url = "https://metamask.io"
+        window.open(metamask_url, '_blank');
+      }
+
+      async function connect(){
+        let accounts = await provider.request({method: 'eth_requestAccounts'})
+        metamaskButton.innerText = accounts[0]
+      }
+
+    run()
+  </script>
+</body>
+</html>

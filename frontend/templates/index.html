@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="rectangle-index">
+            <div class="subtitle">About DApp</div>
+            <div class="index-text">
+                <p>This example extends the SQLite Dapp and shows how to build and interact with a Cartesi Rollups application that acts transparently on personal data, seeking to comply with the requirements of the GDPR - General Data Protection Regulation.
+                There is a already created database with a table named medical. You can perform predefined operations to create, update and delete records, acting as the data subject. On the other hand, you can also operate as a data controller/processor to perform queries and build new datasets for distribution or specific processing. Data subject and data controller/processor are actors within the definition of GDPR - General Data Protection Regulation
+                The example highlights some aspects of GDPR, such as the guarantee of the data subject to no longer have their data in a dataset or the guarantee of their right to know how their data is being used, as well as the end consumers of the data will also be guaranteed of legitimate origin on the data used. Right to be forgotten and other security aspects are not present in this conceptual Dapp. <br>
+                More details at: "AMNESIA: A Technical Solution towards GDPR-compliant Machine Learning. January 2020. DOI:10.5220/0008916700210032. Conference: 6th International Conference on Information Systems Security and Privacy"</p>
+                </div>            
+        </div>
+        <!-- <div style="height:24px;"></div> -->
+        <!-- <div class="rectangle-index">
+            <div class="subtitle">About Dataset</div>
+            <div class="index-text">
+                <p>This database is built in a decentralized way, where we have different entry points for new data. Data of beneficiaries and contractors of a health plan are stored.
+                    We have the following attributes:<br>
+                    age: beneficiary's age;<br>
+                    gender: sex of the plan contractor (male or female);<br>
+                    bmi: beneficiary's body mass index;<br>
+                    children: number of the contractor's dependents covered by the health plan;<br>
+                    smoker: indicates whether the beneficiary is a smoker or not (yes or no);<br>
+                    region: beneficiary's residential area in the US (northeast, southeast, southwest or northwest);<br>
+                    charges: individual medical costs billed by health insurance.</p>
+                </div>            
+        </div> -->
+    </div>
+</div>
+
+{% endblock content %}

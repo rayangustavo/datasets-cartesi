@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col" id="insert_statement">
+            <div class="rectangle">
+                <div class="row">
+                    <div class="subtitle">Insert Data</div>
+                </div>
+                <form method="POST" action="" id="insert-form">
+                    {{ insert_form.csrf_token }}
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="insertAge">Age</label>
+                            {{ insert_form.age (class="form-control", id="insertAge") }}
+                            <!-- <div class="helper">Helper Text</div> -->
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="insertSex">Sex</label>
+                            {{ insert_form.sex (class="form-select", id="insertSex") }}
+                            <!-- <div class="helper" style="margin-left: 18px;">Helper Text</div> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="insertBMI">BMI</label>
+                            {{ insert_form.bmi (class="form-control", id="insertBMI") }}
+                            <!-- <div class="helper">Helper Text</div> -->
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="insertSmoker">Is a smoker?</label>
+                            {{ insert_form.smoker (class="form-select", id="insertSmoker") }}
+                            <!-- <div class="helper" style="margin-left: 18px;">Helper Text</div> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="insertChildren">Number of children</label>
+                            {{ insert_form.children (class="form-control", id="insertChildren") }}
+                            <!-- <div class="helper">Helper Text</div> -->
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="insertRegion">Region</label>
+                            {{ insert_form.region (class="form-select", id="insertRegion") }}
+                            <!-- <div class="helper" style="margin-left: 18px;">Helper Text</div> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="insertCharges">Charges</label>
+                            {{ insert_form.charges (class="form-control", style="width: 350px;", id="insertCharges") }}
+                            <!-- <div class="helper">Helper Text</div> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="submitbutton" onclick="input_statement();print_data();"><span class="send">send</span>Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            {% if statement != '' %}
+            <div class="rectangle" style="width:516px;">
+                <div class="subtitle">Submited Data</div>
+                    <table>
+                        <tr class="spaced">
+                            <td><p class="label">Age: <span class="data" id="insertedAge"></span></p></td>
+                            <td></td>
+                            <td><p class="label">Sex: <span class="data" id="insertedSex"></span></p></td>
+                        </tr>
+                        <tr class="spaced">
+                            <td><p class="label">BMI: <span class="data" id="insertedBMI"></span></p> </td>
+                            <td></td>
+                            <td><p class="label">Is a smoker?: <span class="data" id="insertedSmoker"></span></p></td>
+                        </tr>
+                        <tr class="spaced">
+                            <td><p class="label">Number of children: <span class="data" id="insertedChildren"></span></p> </td>
+                            <td></td>
+                            <td><p class="label">Region: <span class="data" id="insertedRegion"></span></p></td>
+                        </tr>
+                        <tr class="spaced">
+                            <td><p class="label">Charges: <span class="data" id="insertedCharges"></span></p> </td>
+                        </tr>
+                    </table>    
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="config" style="opacity:0;">
+    {% if statement != '' %}
+    <div id="statement_result">
+        {{ statement }}
+    </div>
+    <div id="contract_address">
+        {{ rollups_address }}
+    </div>
+    <div id="contract_abi">
+        {{ input_abi }}
+    </div>
+    {% endif %}
+</div>
+    
+<script>
+    var provider = window.ethereum
+    const config = document.getElementById('config')
+
+    function get_data(){
+        return new Promise((resolve, reject) => {
+        let age = document.getElementById('insertAge').value;
+        let sex = document.getElementById('insertSex').value;
+        let bmi = document.getElementById('insertBMI').value;
+        let children = document.getElementById('insertChildren').value;
+        let smoker = document.getElementById('insertSmoker').value;
+        let region = document.getElementById('insertRegion').value;
+        let charges = document.getElementById('insertCharges').value;
+        let value_list = [age, sex, bmi, children, smoker, region, charges];
+        let none_cont = 0;
+        for(var i = 0; i < 7; i++){
+            if(value_list[i] == ''){
+                none_cont++;
+            }
+        }
+        if (none_cont == 0){
+            resolve(value_list)
+        }
+        else{
+            reject('Error to get values.')
+        }
+        }) 
+    }
+
+    async function print_data(){
+        try{
+            let data = await get_data()
+            if(data){
+                document.getElementById('insertedAge').innerHTML = data[0]
+                document.getElementById('insertedSex').innerHTML = data[1]
+                document.getElementById('insertedBMI').innerHTML = data[2]
+                document.getElementById('insertedChildren').innerHTML = data[3]
+                document.getElementById('insertedSmoker').innerHTML = data[4]
+                document.getElementById('insertedRegion').innerHTML = data[5]
+                document.getElementById('insertedCharges').innerHTML = data[6] 
+            }
+        }catch(err){
+            console.log('ERROR', err)
+        }
+    }
+
+    function getStatement(){
+        return new Promise((resolve, reject) => {
+          let statement = document.getElementById('statement_result').innerText
+          if (statement){
+            resolve(statement)
+          }
+          else{
+            reject('Error to get statement.')
+          }
+        })
+    }
+
+    function getAddress(){
+        return new Promise((resolve, reject) => {
+          let contract_address = document.getElementById('contract_address').innerText
+          if (contract_address){
+            resolve(contract_address)
+          }
+          else{
+            reject('Error to get address.')
+          }
+        })
+    }
+
+    function getABI(){
+        return new Promise((resolve, reject) => {
+          let contract_abi = document.getElementById('contract_abi').innerText
+          if (contract_abi){
+            contract_abi = JSON.parse(contract_abi)
+            resolve(contract_abi)
+          }
+          else{
+            reject('Error to get ABI.')
+          }
+        }) 
+    }
+
+    async function input_statement(){
+        try{
+          let accounts = await provider.request({method: 'eth_accounts'})
+          let input_abi = await getABI()
+          let rollups_address = await getAddress()
+          let input_contract = await new web3.eth.Contract(input_abi, rollups_address)
+          let statement = await getStatement()
+          let receipt = await input_contract.methods.addInput(statement).send({from:accounts[0]})
+        } catch(err){
+          console.log('ERROR', err)
+        } 
+    }
+
+    if(config.innerText){
+        console.log("oi")
+        input_statement();
+        print_data();
+    }
+
+</script>
+
+{% endblock content %}

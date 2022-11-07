@@ -1,0 +1,5 @@
+{
+  "fs": {
+    "files": ["./backend/datasets.py", "./backend/datasets_sqlite.py", "./backend/data.db", "entrypoint.sh"]
+  }
+}

@@ -1,0 +1,9 @@
+jinja2<3.1.0
+werkzeug==2.0.3 #no rollups é 0.16.0 . python é 3.8.16
+flask == 1.1.2
+requests == 2.23.0
+gunicorn == 19.9.0
+itsdangerous == 1.1.0
+WTForms==3.0.1
+Flask-WTF==1.0.1
+web3==5.29.0

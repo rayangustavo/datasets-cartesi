@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col" id="update_statement">
+            <div class="rectangle">
+                <div class="row">
+                    <div class="subtitle" style="margin-bottom: 13px;">Update Data</div>
+                </div>
+                <form method="POST" action="">
+                {{ update_form.csrf_token }}
+                <div class="row">
+                    <div class="obs">Reference data</div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="label" for="updateFromAttribute">Attribute</label>
+                        {{ update_form.from_attribute (class="form-select-helper", style="margin-left: 0px;", id="updateFromAttribute") }}
+                        <!-- <div class="helper">Helper Text</div> -->
+                    </div>
+                    <div class="col">
+                        <label class="label" style="margin-left: 18px;" for="updateFromValue">Value</label>
+                        {{ update_form.from_value (class="form-control-helper", style="margin-left: 18px;", id="updateFromValue") }}
+                        <!-- <div class="helper" style="margin-left: 18px;">Helper Text</div> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="obs" style="margin-top: 21px;">What do you want to change?</div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="label" for="updateAttribute">New Atrribute</label>
+                        {{ update_form.attribute (class="form-select-helper", style="margin-left: 0px;", id="updateAttribute") }}
+                        <!-- <div class="helper">Helper Text</div> -->
+                    </div>
+                    <div class="col">
+                        <label class="label" style="margin-left: 18px;" for="updateNewValue">New Value</label>
+                        {{ update_form.new_value (class="form-control-helper", style="margin-left: 18px;", id="updateNewValue") }}
+                        <!-- <div class="helper" style="margin-left: 18px;">Helper Text</div> -->
+                    </div>
+                </div>
+                <div style="height:120px"></div>
+                <div class="row">
+                    <div class="col">
+                        <button class="submitbutton", onclick="input_statement();"><span class="send">send</span>Submit</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+        <div class="col">
+            {% if payload_list != None %}
+            <div class="flex-rectangle">
+                <h6 class="table-title">Data to Update</h6>
+                    {% if payload_list == "NOTFOUND" %}
+                    Not found.
+                    {% else %}
+                    <table class="table">
+                        <thead>
+                            <tr align="center">
+                                <th class="table-label">Age</th>
+                                <th class="table-label">Sex</th>
+                                <th class="table-label">BMI</th>
+                                <th class="table-label">Number of children</th>
+                                <th class="table-label">Is a smoker?</th>
+                                <th class="table-label">Region</th>
+                                <th class="table-label">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%- for p in payload_list %}
+                            <tr align="center">
+                                <td class="option">{{ p[0] }}</td>
+                                <td class="option">{{ p[1] }}</td>
+                                <td class="option">{{ p[2] }}</td>
+                                <td class="option">{{ p[3] }}</td>
+                                <td class="option">{{ p[4] }}</td>
+                                <td class="option">{{ p[5] }}</td>
+                                <td class="option">{{ p[6] }}</td>
+                            </tr>
+                            {% endfor -%}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="config" style="opacity:0;">
+    {% if statement != '' %}
+    <div id="statement_result">
+        {{ statement }}
+    </div>
+    <div id="contract_address">
+        {{ rollups_address }}
+    </div>
+    <div id="contract_abi">
+        {{ input_abi }}
+    </div>
+    {% endif %}
+</div>
+
+
+<script>
+    var provider = window.ethereum
+    const config = document.getElementById('config')
+
+    function getStatement(){
+        return new Promise((resolve, reject) => {
+          let statement = document.getElementById('statement_result').innerText
+          if (statement){
+            resolve(statement)
+          }
+          else{
+            reject('Error to get statement.')
+          }
+        })
+    }
+
+    function getAddress(){
+        return new Promise((resolve, reject) => {
+          let contract_address = document.getElementById('contract_address').innerText
+          if (contract_address){
+            resolve(contract_address)
+          }
+          else{
+            reject('Error to get address.')
+          }
+        })
+    }
+
+    function getABI(){
+        return new Promise((resolve, reject) => {
+          let contract_abi = document.getElementById('contract_abi').innerText
+          if (contract_abi){
+            contract_abi = JSON.parse(contract_abi)
+            resolve(contract_abi)
+          }
+          else{
+            reject('Error to get ABI.')
+          }
+        }) 
+    }
+
+    async function input_statement(){
+        try{
+          let accounts = await provider.request({method: 'eth_accounts'})
+          let input_abi = await getABI()
+          let rollups_address = await getAddress()
+          let input_contract = await new web3.eth.Contract(input_abi, rollups_address)
+          let statement = await getStatement()
+          let receipt = await input_contract.methods.addInput(statement).send({from:accounts[0]})
+        } catch(err){
+          console.log('ERROR', err)
+        } 
+    }
+
+    if(config.innerText){
+        input_statement();
+    }
+</script>
+
+{% endblock content %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col" id="select_statement">
+            <div class="rectangle">
+                <div class="row">
+                    <div class="subtitle">Filter by</div>
+                </div>
+                <form method="POST" action="">
+                    {{ select_form.csrf_token }}
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="selectAge">Age</label>
+                            {{ select_form.age (class="form-control", id="selectAge") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="selectSex">Sex</label>
+                            {{ select_form.sex (class="form-select", id="selectSex") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="selectBMI">BMI</label>
+                            {{ select_form.bmi (class="form-control", id="selectBMI") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="selectSmoker">Is a smoker?</label>
+                            {{ select_form.smoker (class="form-select", id="selectSmoker") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="selectChildren">Number of children</label>
+                            {{ select_form.children (class="form-control", id="selectChildren") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="selectRegion">Region</label>
+                            {{ select_form.region (class="form-select", id="selectRegion") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="selectCharges">Charges</label>
+                            {{ select_form.charges (class="form-control", style="width: 350px;", id="selectCharges") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ select_form.submit (class="submitbutton", style="background-color: #1e6eb0; float:right;", id="sub_button") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            {% if payload_list != None %}
+            <div class="flex-rectangle" id="select_table">
+                <div class="table-title">Search Results</div>
+                    {% if payload_list == "NOTFOUND" %}
+                    Not found.
+                    {% else %}
+                    <table class="table" id="select_table">
+                        <thead>
+                            <tr align="center">
+                                <th class="table-label">Age</th>
+                                <th class="table-label">Sex</th>
+                                <th class="table-label">BMI</th>
+                                <th class="table-label">Number of children</th>
+                                <th class="table-label">Is a smoker?</th>
+                                <th class="table-label">Region</th>
+                                <th class="table-label">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%- for p in payload_list %}
+                            <tr align="center">
+                                <td class="option">{{ p[0] }}</td>
+                                <td class="option">{{ p[1] }}</td>
+                                <td class="option">{{ p[2] }}</td>
+                                <td class="option">{{ p[3] }}</td>
+                                <td class="option">{{ p[4] }}</td>
+                                <td class="option">{{ p[5] }}</td>
+                                <td class="option">{{ p[6] }}</td>
+                            </tr>
+                            {% endfor -%}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

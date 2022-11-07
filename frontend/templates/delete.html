@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col" id="delete_statement">
+            <div class="rectangle">
+                <div class="row">
+                    <div class="subtitle">Delete Data</div>
+                </div>
+                <form method="POST" action="">
+                    {{ delete_form.csrf_token }}
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="deleteAge">Age</label>
+                            {{ delete_form.age (class="form-control", id="deleteAge") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="deleteSex">Sex</label>
+                            {{ delete_form.sex (class="form-select", id="deleteSex") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="deleteBMI">BMI</label>
+                            {{ delete_form.bmi (class="form-control", id="deleteBMI") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="deleteSmoker">Is a smoker?</label>
+                            {{ delete_form.smoker (class="form-select", id="deleteSmoker") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="deleteChildren">Number of children</label>
+                            {{ delete_form.children (class="form-control", id="deleteChildren") }}
+                        </div>
+                        <div class="col">
+                            <label class="label" style="margin-left: 18px;" for="deleteRegion">Region</label>
+                            {{ delete_form.region (class="form-select", id="deleteRegion") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="label" for="deleteCharges">Charges</label>
+                            {{ delete_form.charges (class="form-control", style="width: 350px;", id="deleteCharges") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="submitbutton" onclick="input_statement();print_data();"><span class="send">send</span>Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            {% if payload_list != None %}
+            <div class="flex-rectangle">
+                <div class="table-title">Data Submitted for Deletion</div>
+                    {% if payload_list == "NOTFOUND" %}
+                    Not found.
+                    {% else %}
+                    <table class="table">
+                        <thead>
+                            <tr align="center">
+                                <th class="table-label">Age</th>
+                                <th class="table-label">Sex</th>
+                                <th class="table-label">BMI</th>
+                                <th class="table-label">Number of children</th>
+                                <th class="table-label">Is a smoker?</th>
+                                <th class="table-label">Region</th>
+                                <th class="table-label">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%- for p in payload_list %}
+                            <tr align="center">
+                                <td class="option">{{ p[0] }}</td>
+                                <td class="option">{{ p[1] }}</td>
+                                <td class="option">{{ p[2] }}</td>
+                                <td class="option">{{ p[3] }}</td>
+                                <td class="option">{{ p[4] }}</td>
+                                <td class="option">{{ p[5] }}</td>
+                                <td class="option">{{ p[6] }}</td>
+                            </tr>
+                            {% endfor -%}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="config" style="opacity:0;">
+    {% if statement != '' %}
+    <div id="statement_result">
+        {{ statement }}
+    </div>
+    <div id="contract_address">
+        {{ rollups_address }}
+    </div>
+    <div id="contract_abi">
+        {{ input_abi }}
+    </div>
+    {% endif %}
+</div>
+
+
+<script>
+    var provider = window.ethereum
+    const config = document.getElementById('config')
+
+    function getStatement(){
+        return new Promise((resolve, reject) => {
+          let statement = document.getElementById('statement_result').innerText
+          if (statement){
+            resolve(statement)
+          }
+          else{
+            reject('Error to get statement.')
+          }
+        })
+    }
+
+    function getAddress(){
+        return new Promise((resolve, reject) => {
+          let contract_address = document.getElementById('contract_address').innerText
+          if (contract_address){
+            resolve(contract_address)
+          }
+          else{
+            reject('Error to get address.')
+          }
+        })
+    }
+
+    function getABI(){
+        return new Promise((resolve, reject) => {
+          let contract_abi = document.getElementById('contract_abi').innerText
+          if (contract_abi){
+            contract_abi = JSON.parse(contract_abi)
+            resolve(contract_abi)
+          }
+          else{
+            reject('Error to get ABI.')
+          }
+        }) 
+    }
+
+    async function input_statement(){
+        try{
+          let accounts = await provider.request({method: 'eth_accounts'})
+          let input_abi = await getABI()
+          let rollups_address = await getAddress()
+          let input_contract = await new web3.eth.Contract(input_abi, rollups_address)
+          let statement = await getStatement()
+          let receipt = await input_contract.methods.addInput(statement).send({from:accounts[0]})
+        } catch(err){
+          console.log('ERROR', err)
+        } 
+    }
+
+    if(config.innerText){
+        input_statement();
+        print_data();
+    }
+
+</script>
+
+
+{% endblock content %}
